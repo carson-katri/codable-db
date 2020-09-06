@@ -1,32 +1,5 @@
 import Foundation
 
-public protocol Database: Codable {}
-
-public protocol Store: ObservableObject {
-    associatedtype DB: Database
-    func save() throws
-    func load() throws
-    var db: DB! { get set }
-    var dbPublished: Published<DB?> { get }
-    var dbPublisher: Published<DB?>.Publisher { get }
-}
-
-public final class MemoryStore<DB>: Store where DB: Database {
-    @Published public var db: DB! {
-        didSet { try? save() }
-    }
-    public var dbPublished: Published<DB?> { _db }
-    public var dbPublisher: Published<DB?>.Publisher { $db }
-    
-    public init(_ initialState: DB) {
-        db = initialState
-    }
-    
-    public func save() throws {}
-    
-    public func load() throws {}
-}
-
 public final class FileStore<DB>: Store where DB: Database {
     @Published public var db: DB! = nil {
         didSet { try? save() }
